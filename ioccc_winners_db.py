@@ -5,6 +5,7 @@ import dataclasses
 import logging
 import os
 import re
+import sqlite3
 from typing import Optional, Iterator, Dict
 
 _logger = logging.getLogger(__name__)
@@ -18,16 +19,21 @@ class IOCCCWinnerEntry:
     hint_location: Optional[str]
     spoiler: Optional[str]
 
-    def prog(self) -> str:
-        with open(self.prog_location) as _prog:
+    def prog(self) -> bytes:
+        with open(self.prog_location, "rb") as _prog:
             return _prog.read()
 
     def hint(self) -> Optional[str]:
         if not self.hint_location:
             return None
 
-        with open(self.hint_location) as _hint:
-            return _hint.read()
+        try:
+            # TODO: Make it work with `latin-1` encoding. (for example see 2001/ollinger).
+            with open(self.hint_location) as _hint:
+                return _hint.read()
+        except UnicodeDecodeError:
+            _logger.warning(f"Can't get the hint for {self.year}/{self.name}, the encoding isn't utf-8!")
+            return None
 
 
 class IOCCCWinnersDB:
@@ -129,3 +135,40 @@ class IOCCCWinnersDB:
     class _EntryDetails:
         author: Optional[str]
         year: str
+
+
+def build_sqllite_db(entries: Iterator[IOCCCWinnerEntry], output_file: str):
+    # Connect to the SQLite database (or create it if it doesn't exist)
+    with sqlite3.connect(output_file) as conn:
+        # Create the "winners" table
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS winners (
+                name TEXT,
+                year INTEGER,
+                spoiler TEXT,
+                prog BLOB,
+                hint TEXT
+            )
+        """)
+
+        for entry in entries:
+            _logger.debug(f"Writing to DB {entry.year}/{entry.name}")
+            hint = entry.hint()
+            if not hint:
+                hint = ""
+
+            conn.execute(
+                """
+                INSERT INTO winners (name, year, spoiler, prog, hint)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (entry.name, entry.year, entry.spoiler, entry.prog(), hint)
+            )
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    _logger.info("Building DB...")
+    winners_db = IOCCCWinnersDB()
+    build_sqllite_db(winners_db.get_all_entries(), "ioccc_winners.sqlite")
+    _logger.info("Done!")
