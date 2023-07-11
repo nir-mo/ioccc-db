@@ -37,7 +37,7 @@ class IOCCCWinnerEntry:
 
 
 class IOCCCWinnersDB:
-    def __init__(self, ioccc_winners_dir=os.path.join(os.path.dirname(__file__), "winner")):
+    def __init__(self, ioccc_winners_dir):
         self.entries: Dict[(str, str), IOCCCWinnerEntry] = IOCCCWinnersDB.build_db_entries(ioccc_winners_dir)
 
     def get_entry(self, year, name) -> IOCCCWinnerEntry:
