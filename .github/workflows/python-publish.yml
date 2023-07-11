@@ -3,14 +3,13 @@ name: Create new release manually.
 on:
   workflow_dispatch:
 
+
 permissions:
   contents: read
 
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
       with:
@@ -28,9 +27,24 @@ jobs:
     
     - name: Build IOCCC DB
       run: python ioccc_db/cli.py --verbose --force --output_file=../ioccc_winners.sqlite
-    
+
+    - name: Get current date
+      id: get_date
+      run: echo "CURRENT_DATE=$(date -u +'%Y.%m.%d')" >> $GITHUB_ENV
+
+    - name: Create and push new tag
+      id: create_tag
+      if: github.event_name != 'workflow_dispatch'
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git tag -a ${{ env.CURRENT_DATE }} -m "New release: ${{ env.CURRENT_DATE }}"
+        git push --tags
+
     - name: Create new release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
+        tag_name: ${{ env.CURRENT_DATE }}
+        release_name: Release ${{ env.CURRENT_DATE }}
+        draft: false
         files: ioccc_winners.sqlite
