@@ -34,6 +34,10 @@ DEFAULT_IOCCC_SQLITE_DB_PATH = os.path.join(os.path.dirname(__file__), "ioccc_wi
 )
 def build_db(ioccc_winners_directory, output_file, force, verbose):
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
+    if not os.path.exists(ioccc_winners_directory):
+        logging.error(f"Can't find IOCCC winners directory {ioccc_winners_directory}")
+        exit(1)
+
     if os.path.exists(output_file):
         if force:
             logging.debug(f"File {output_file} already exists! removing it...")
