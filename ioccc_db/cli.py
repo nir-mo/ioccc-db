@@ -7,8 +7,8 @@ from ioccc_winners_db import IOCCCWinnersDB, build_sqllite_db
 
 __author__ = "Nir Moshe (nirmo)"
 
-DEFAULT_IOCCC_WINNERS_DIRECTORY = os.path.join(os.path.dirname(__file__), "../winner")
-DEFAULT_IOCCC_SQLITE_DB_PATH = os.path.join(os.path.dirname(__file__), "../ioccc_winners.sqlite")
+DEFAULT_IOCCC_WINNERS_DIRECTORY = os.path.join(os.path.dirname(__file__), "..", "winner")
+DEFAULT_IOCCC_SQLITE_DB_PATH = os.path.join(os.path.dirname(__file__), "..", "ioccc_winners.sqlite")
 
 
 @click.command()
