@@ -38,9 +38,11 @@ class IOCCCWinnerEntry:
 
 class IOCCCWinnersDB:
     def __init__(self, ioccc_winners_dir):
+        # TODO: Create lazy loading here...
         self.entries: Dict[(str, str), IOCCCWinnerEntry] = IOCCCWinnersDB.build_db_entries(ioccc_winners_dir)
 
     def get_entry(self, year, name) -> IOCCCWinnerEntry:
+        # TODO: Consider remove this function.
         return self.entries.get((year, name))
 
     def get_all_entries(self) -> Iterator[IOCCCWinnerEntry]:
