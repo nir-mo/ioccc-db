@@ -138,7 +138,6 @@ class IOCCCWinnersDB:
 
 
 def build_sqllite_db(entries: Iterator[IOCCCWinnerEntry], output_file: str):
-    # Connect to the SQLite database (or create it if it doesn't exist)
     with sqlite3.connect(output_file) as conn:
         # Create the "winners" table
         conn.execute("""
@@ -164,11 +163,3 @@ def build_sqllite_db(entries: Iterator[IOCCCWinnerEntry], output_file: str):
                 """,
                 (entry.name, entry.year, entry.spoiler, entry.prog(), hint)
             )
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    _logger.info("Building DB...")
-    winners_db = IOCCCWinnersDB()
-    build_sqllite_db(winners_db.get_all_entries(), "ioccc_winners.sqlite")
-    _logger.info("Done!")
