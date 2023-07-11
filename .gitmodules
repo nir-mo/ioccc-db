@@ -1,0 +1,3 @@
+[submodule "winner"]
+	path = winner
+	url = https://github.com/ioccc-src/winner.git
