@@ -3,7 +3,7 @@ import os
 
 import click
 
-from ioccc_winners_db import IOCCCWinnersDB, build_sqllite_db
+import ioccc_winners
 
 __author__ = "Nir Moshe (nirmo)"
 
@@ -49,8 +49,8 @@ def build_db(ioccc_winners_directory, output_file, force, verbose):
             exit(1)
 
     logging.info(f"Building DB: {output_file}")
-    winners_db = IOCCCWinnersDB(ioccc_winners_directory)
-    build_sqllite_db(winners_db.get_all_entries(), output_file)
+    entries = ioccc_winners.get_ioccc_winners_entries(ioccc_winners_directory)
+    ioccc_winners.build_sqllite_db(entries, output_file)
     logging.info("Done!")
 
 
