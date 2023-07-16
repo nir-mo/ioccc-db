@@ -37,7 +37,27 @@ class IOCCCWinnerEntry:
 
 
 def get_ioccc_winners_entries(ioccc_winners_dir) -> Iterator[IOCCCWinnerEntry]:
-    entries = {}
+    """
+    Retrieves IOCCC (International Obfuscated C Code Contest) winner entries from a specified directory.
+
+    :param ioccc_winners_dir: The directory path where the IOCCC winner entries are located.
+    :type ioccc_winners_dir: str
+
+    :return: An iterator that yields IOCCC winner entries.
+    :rtype: Iterator[IOCCCWinnerEntry]
+
+    This function iterates through the specified directory and its subdirectories to find IOCCC winner entries.
+    If a directory contains a single program file named 'prog.c', a single IOCCC winner entry is generated.
+    If a directory contains multiple program files with the extension '.c', an IOCCC winner entry is generated for each
+    program file.
+
+    The IOCCC winner entries are built using the '_build_entry_from_path' function.
+    Spoilers are retrieved from the 'summary.txt' file located in the 'all' subdirectory of the 'ioccc_winners_dir'.
+
+    Example usage:
+        for entry in get_ioccc_winners_entries('/path/to/ioccc_winners_dir'):
+            print(entry)
+    """
     spoilers = _get_spoilers(spoilers_file=os.path.join(ioccc_winners_dir, "all", "summary.txt"))
     for dirpath, dirnames, filenames in os.walk(top=ioccc_winners_dir):
         if "prog.c" in filenames:
@@ -52,8 +72,6 @@ def get_ioccc_winners_entries(ioccc_winners_dir) -> Iterator[IOCCCWinnerEntry]:
                 entry = _build_entry_from_path(dirpath, prog, spoilers)
                 if entry:
                     yield entry
-
-    return entries
 
 
 def _build_entry_from_path(dirpath: str, c_filename: str, spoilers: Dict) -> Optional[IOCCCWinnerEntry]:
@@ -128,6 +146,31 @@ class _EntryDetails:
 
 
 def build_sqllite_db(entries: Iterator[IOCCCWinnerEntry], output_file: str):
+    """
+    Builds an SQLite database with the provided IOCCC winner entries.
+
+    :param entries: An iterator of IOCCCWinnerEntry objects.
+    :type entries: Iterator[IOCCCWinnerEntry]
+
+    :param output_file: The path to the output SQLite database file.
+    :type output_file: str
+
+    This function takes an iterator of IOCCC winner entries and creates an SQLite database file at the specified output
+    file path.
+    Each entry is inserted into the "winners" table of the database, which has the following columns:
+        - name (TEXT): The name of the entry.
+        - year (INTEGER): The year the entry won the IOCCC.
+        - spoiler (TEXT): The spoiler for the entry.
+        - prog (BLOB): The program file content as a binary large object.
+        - hint (TEXT): The hint associated with the entry, if available.
+
+    If the "winners" table doesn't exist in the database file, it will be created.
+
+    Example usage:
+        entries = get_ioccc_winners_entries('/path/to/ioccc_winners_dir')
+        build_sqllite_db(entries, '/path/to/output.db')
+
+    """
     with sqlite3.connect(output_file) as conn:
         # Create the "winners" table
         conn.execute("""
