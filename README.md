@@ -42,20 +42,30 @@ programming languages. To access the database, follow these steps:
 
 ## How to Generate the Database
 
-The `ioccc_db/cli.py` script in this repository can be used to generate the SQLite database from IOCCC winner 
-entries. To generate the database, follow these steps:
+To generate the IOCCC Winners Database, follow these steps:
 
 1. Install the required dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-2. Run the `ioccc_db/cli.py` script, specifying the directory containing the IOCCC winner entries:
+2. Fetch the submodule from the IOCCC winners repository:
    ```
-   python ioccc_db/cli.py --verbose --force --output_file=../ioccc_winners.sqlite
+   git submodule update --init
+   ```
+   
+   __OR__, If you encounter any issues with the submodule, you can clone the IOCCC winners repository manually into the
+   `winners` directory:
+   ```
+   git clone https://github.com/ioccc-src/winner winners
    ```
 
-3. The script will generate the `ioccc_winners.sqlite` file, which contains the SQLite database with all the winners 
+3. Run the `ioccc_db/cli.py` script, specifying the directory containing the IOCCC winner entries:
+   ```
+   python ioccc_db/cli.py --verbose --force --output_file=../ioccc_winners.sqlite --ioccc_winners_directory=ioccc/winners.directory
+   ```
+
+4. The script will generate the `ioccc_winners.sqlite` file, which contains the SQLite database with all the winners 
    information.
 
 ## Technical Debts
