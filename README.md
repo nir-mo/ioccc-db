@@ -32,7 +32,7 @@ programming languages. To access the database, follow these steps:
 3. The SQLite database file is located at `ioccc_winners.sqlite`. You can use your preferred SQLite client or library 
    to connect to the database and perform queries.
 
-# Explore the IOCCC winners DB
+## Explore the IOCCC winners DB
 
 
 ```python
@@ -57,19 +57,6 @@ df
 ```
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -168,7 +155,7 @@ df
 
 
 
-## print the obfuscated program
+### print the obfuscated program
 
 
 ```python
