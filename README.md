@@ -32,13 +32,176 @@ programming languages. To access the database, follow these steps:
 3. The SQLite database file is located at `ioccc_winners.sqlite`. You can use your preferred SQLite client or library 
    to connect to the database and perform queries.
 
-4. Explore the database schema to understand the available tables and columns. The `winners` table contains the 
-   following columns:
-   - `name` (TEXT): The name of the IOCCC winner.
-   - `year` (INTEGER): The year of participation.
-   - `spoiler` (TEXT): The spoiler associated with the entry.
-   - `prog` (BLOB): The program source code as a binary large object.
-   - `hint` (TEXT): A hint related to the entry (if available).
+# Explore the IOCCC winners DB
+
+
+```python
+import pandas as pd
+import sqlite3
+
+# Connect to the SQLite database
+conn = sqlite3.connect('ioccc_winners.sqlite')
+
+# Query to select 10 rows of data from the "winners" table
+query = "SELECT * FROM winners WHERE year < 1998 LIMIT 10"
+
+# Read the table into a pandas DataFrame
+df = pd.read_sql_query(query, conn)
+
+conn.close()
+```
+
+
+```python
+df
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>year</th>
+      <th>spoiler</th>
+      <th>prog</th>
+      <th>hint</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>litmaath</td>
+      <td>1988</td>
+      <td>sorts each arg using only argc, argv, and 'whi...</td>
+      <td>b'main(argc, argv)\nint\targc;\nchar\t**argv;\...</td>
+      <td>Best small program:\n\n\tMaarten Litmaath\n\tF...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>phillipps</td>
+      <td>1988</td>
+      <td>'first day of christmas', tables, heavily main...</td>
+      <td>b'main(t,_,a )\nchar\n*\na;\n{\n\t\t\t\treturn...</td>
+      <td>Least likely to compile successfully:\n\n\tIan...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>reddy</td>
+      <td>1988</td>
+      <td>prints name of 'char *(*(foo[16])();', compressed</td>
+      <td>b'#include&lt;stdio.h&gt;\n#include&lt;ctype.h&gt;\n#defin...</td>
+      <td>Most useful Obfuscated C program:\n\n\tAmperif...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>westley</td>
+      <td>1988</td>
+      <td>prints '3.141', circle made of '_-_-_-_' in la...</td>
+      <td>b'#define _ -F&lt;00||--F-OO--;\nint F=00,OO=00;m...</td>
+      <td>Best layout:\n\n    \tMerlyn LeRoy (Brian West...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>applin</td>
+      <td>1988</td>
+      <td>massive #define stuff, includes itself; prints...</td>
+      <td>b'I a\nU a\nI b\nU b\nI c\nU c\nI d\nU d\nI e\...</td>
+      <td>Best of show:\n\n    \tJack Applin\n\tHewlett-...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>spinellis</td>
+      <td>1988</td>
+      <td>#include "/dev/tty"</td>
+      <td>b'#include "/dev/tty"\n'</td>
+      <td>Best abuse of the rules:\n\n    \tDiomidis Spi...</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>robison</td>
+      <td>1988</td>
+      <td>print e in any base, uses only --, &gt;=, and whi...</td>
+      <td>b'#include &lt;stdio.h&gt;\nunsigned char w,h,i,l,e,...</td>
+      <td>Best abuse of C constructs:\n\n    \tArch D. R...</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>dale</td>
+      <td>1988</td>
+      <td>prints command line, using lots of system calls</td>
+      <td>b'#define _ define\n#_ P char\n#_ p int\n#_ O ...</td>
+      <td>Best abuse of system calls:\n\n    \tPaul Dale...</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>isaak</td>
+      <td>1988</td>
+      <td>table driven table of the elements; cpp, self-...</td>
+      <td>b'main(){}\x0c\n#define P define\n#P U ifdef\n...</td>
+      <td>Best visuals:\n\n    \tMark Isaak\n\tImagen Co...</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>bright</td>
+      <td>1986</td>
+      <td>hex dump, cpp compressed, uses lost of &lt;&lt; for ...</td>
+      <td>b'#include &lt;stdio.h&gt;\n#define O1O printf\n#def...</td>
+      <td># Most useful obfuscation \n\nWalter Bright\n\...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+## print the obfuscated program
+
+
+```python
+westley = df[df.name == "westley"]
+prog = westley.prog.values[0]
+
+import codecs
+print(codecs.decode(prog))
+```
+
+    #define _ -F<00||--F-OO--;
+    int F=00,OO=00;main(){F_OO();printf("%1.3f\n",4.*-F/OO/OO);}F_OO()
+    {
+                _-_-_-_
+           _-_-_-_-_-_-_-_-_
+        _-_-_-_-_-_-_-_-_-_-_-_
+      _-_-_-_-_-_-_-_-_-_-_-_-_-_
+     _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+     _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+    _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+    _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+    _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+    _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+     _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+     _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+      _-_-_-_-_-_-_-_-_-_-_-_-_-_
+        _-_-_-_-_-_-_-_-_-_-_-_
+            _-_-_-_-_-_-_-_
+                _-_-_-_
+    }
+    
+
+
 
 ## How to Generate the Database
 
