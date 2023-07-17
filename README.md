@@ -4,6 +4,10 @@ This repository contains a database of all the winners in the International Obfu
 The database includes information about each winner, including their source code, spoiler, hint (if available), and the
 year of their participation.
 
+The information in this database was gathered from the official IOCCC repository available at
+[https://github.com/ioccc-src/winner](https://github.com/ioccc-src/winner). We are grateful to the IOCCC community for
+providing this valuable collection of obfuscated C code entries.
+
 ## Introduction
 
 The International Obfuscated C Code Contest is a renowned competition that celebrates the art of writing creative, 
@@ -38,7 +42,7 @@ programming languages. To access the database, follow these steps:
 
 ## How to Generate the Database
 
-The `build_sqllite_db.py` script in this repository can be used to generate the SQLite database from IOCCC winner 
+The `ioccc_db/cli.py` script in this repository can be used to generate the SQLite database from IOCCC winner 
 entries. To generate the database, follow these steps:
 
 1. Install the required dependencies:
